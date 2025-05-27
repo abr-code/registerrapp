@@ -1,0 +1,89 @@
+import { useState, useEffect } from 'react'
+import type { Member } from './types/Member'
+import { memberService } from './services/memberService'
+import { SearchBar } from './components/SearchBar'
+import { MemberList } from './components/MemberList'
+import { MemberForm } from './components/MemberForm'
+import './App.css'
+
+function App() {
+  const [members, setMembers] = useState<Member[]>([])
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [showForm, setShowForm] = useState(false)
+
+  useEffect(() => {
+    loadMembers()
+  }, [])
+
+  const loadMembers = async () => {
+    const data = await memberService.getAll()
+    setMembers(data)
+  }
+
+  const handleSearch = async (query: string, field?: keyof Member) => {
+    const results = await memberService.search(query, field)
+    setMembers(results)
+  }
+
+  const handleCreate = async (member: Omit<Member, 'id' | 'createdAt' | 'updatedAt'>) => {
+    await memberService.create(member)
+    setShowForm(false)
+    loadMembers()
+  }
+
+  const handleUpdate = async (member: Omit<Member, 'id' | 'createdAt' | 'updatedAt'>) => {
+    if (selectedMember) {
+      await memberService.update(selectedMember.id, member)
+      setSelectedMember(null)
+      setShowForm(false)
+      loadMembers()
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('¿Está seguro de que desea eliminar este registro?')) {
+      await memberService.delete(id)
+      loadMembers()
+    }
+  }
+
+  const handleEdit = (member: Member) => {
+    setSelectedMember(member)
+    setShowForm(true)
+  }
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Registro de Miembros</h1>
+        <button onClick={() => setShowForm(true)} className="add-button">
+          Nuevo Registro
+        </button>
+      </header>
+
+      <main>
+        {showForm ? (
+          <MemberForm
+            member={selectedMember || undefined}
+            onSubmit={selectedMember ? handleUpdate : handleCreate}
+            onCancel={() => {
+              setShowForm(false)
+              setSelectedMember(null)
+            }}
+          />
+        ) : (
+          <>
+            <SearchBar onSearch={handleSearch} />
+            <MemberList
+              members={members}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </>
+        )}
+      </main>
+    </div>
+  )
+}
+
+export default App
