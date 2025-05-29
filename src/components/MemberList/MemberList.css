@@ -1,0 +1,66 @@
+.member-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  color: var(--text-color, #000);
+}
+
+.member-list th,
+.member-list td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.member-list th {
+  background-color: var(--header-bg, #f5f5f5);
+  font-weight: bold;
+  color: var(--header-text, #000);
+}
+
+.member-list tr:hover {
+  background-color: var(--hover-bg, #f9f9f9);
+}
+
+@media (prefers-color-scheme: dark) {
+  .member-list table {
+    --text-color: #fff;
+    --border-color: #444;
+  }
+
+  .member-list th {
+    --header-bg: #1a1a1a;
+    --header-text: #fff;
+  }
+
+  .member-list tr:hover {
+    --hover-bg: #2d2d2d;
+  }
+}
+
+.edit-button,
+.delete-button {
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.25rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #1976D2;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}

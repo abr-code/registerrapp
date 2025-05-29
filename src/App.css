@@ -1,3 +1,7 @@
+:root {
+  color-scheme: light dark;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -6,6 +10,20 @@
 
 .app {
   font-family: Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app {
+    --text-color: #fff;
+    --bg-color: #1a1a1a;
+    --border-color: #444;
+    --input-bg: #2d2d2d;
+    --input-text: #fff;
+    --form-bg: #2d2d2d;
+    --label-color: #fff;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
 }
 
 header {
@@ -28,145 +46,4 @@ header {
 
 .add-button:hover {
   background-color: #45a049;
-}
-
-.search-bar {
-  margin-bottom: 2rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.search-input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.search-select {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.member-list table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.member-list th,
-.member-list td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.member-list th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-}
-
-.member-list tr:hover {
-  background-color: #f9f9f9;
-}
-
-.edit-button,
-.delete-button {
-  padding: 0.25rem 0.5rem;
-  margin: 0 0.25rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-button {
-  background-color: #2196F3;
-  color: white;
-}
-
-.delete-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.edit-button:hover {
-  background-color: #1976D2;
-}
-
-.delete-button:hover {
-  background-color: #d32f2f;
-}
-
-.member-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.form-group textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.radio-group {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: normal;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.form-actions button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.form-actions button[type="submit"] {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.form-actions button[type="button"] {
-  background-color: #9e9e9e;
-  color: white;
-}
-
-.form-actions button:hover {
-  opacity: 0.9;
 }

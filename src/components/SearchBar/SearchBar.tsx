@@ -1,5 +1,6 @@
 import { type ChangeEvent, useState } from 'react';
-import type { Member } from '../types/Member';
+import type { Member } from '../../types/Member';
+import './SearchBar.css';
 
 interface SearchBarProps {
     onSearch: (query: string, field?: keyof Member) => void;

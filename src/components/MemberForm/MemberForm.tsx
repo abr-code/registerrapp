@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
-import type { Member, MemberType, VisitReason } from '../types/Member';
+import type { Member, MemberType, VisitReason } from '../../types/Member';
+import './MemberForm.css';
 
 interface MemberFormProps {
     member?: Member;

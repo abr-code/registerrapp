@@ -1,4 +1,5 @@
-import type { Member } from '../types/Member';
+import type { Member } from '../../types/Member';
+import './MemberList.css';
 
 interface MemberListProps {
     members: Member[];
