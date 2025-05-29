@@ -17,8 +17,8 @@ export const MemberList = ({ members, onEdit, onDelete }: MemberListProps) => {
                         <th>Tipo</th>
                         <th>Nombre</th>
                         <th>Edad</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
+                        <th>Teléfono</th>                        <th>Email</th>
+                        <th>Viene invitado por</th>
                         <th>Razón de visita</th>
                         <th>Acciones</th>
                     </tr>
@@ -32,6 +32,7 @@ export const MemberList = ({ members, onEdit, onDelete }: MemberListProps) => {
                             <td>{member.age}</td>
                             <td>{member.phone}</td>
                             <td>{member.email}</td>
+                            <td>{member.invitedBy}</td>
                             <td>{member.visitReason}</td>
                             <td>
                                 <button 
