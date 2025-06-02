@@ -4,12 +4,15 @@ import { memberService } from './services/memberService'
 import { SearchBar } from './components/SearchBar'
 import { MemberList } from './components/MemberList'
 import { MemberForm } from './components/MemberForm'
+import { LoginForm } from './components/LoginForm'
+import { useAuth } from './context/AuthContext'
 import './App.css'
 
 function App() {
   const [members, setMembers] = useState<Member[]>([])
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const { isAuthenticated, login, logout, user } = useAuth()
 
   useEffect(() => {
     loadMembers()
@@ -54,34 +57,54 @@ function App() {
 
   return (
     <div className="app">
-      <header>
-        <h1>Registro de Miembros</h1>
-        <button onClick={() => setShowForm(true)} className="add-button">
-          Nuevo Registro
-        </button>
-      </header>
+      {!isAuthenticated ? (
+        <LoginForm 
+          onSubmit={login}
+          onError={(message) => {
+            // Here you could add a toast notification system
+            alert(message);
+          }}
+        />
+      ) : (
+        <>
+          <header>
+            <h1>Registro de Miembros</h1>
+            <div className="header-actions">
+              <button onClick={() => setShowForm(true)} className="add-button">
+                Nuevo Registro
+              </button>
+              <div className="user-info">
+                <span>{user?.email}</span>
+                <button onClick={logout} className="logout-button">
+                  Cerrar Sesión
+                </button>
+              </div>
+            </div>
+          </header>
 
-      <main>
-        {showForm ? (
-          <MemberForm
-            member={selectedMember || undefined}
-            onSubmit={selectedMember ? handleUpdate : handleCreate}
-            onCancel={() => {
-              setShowForm(false)
-              setSelectedMember(null)
-            }}
-          />
-        ) : (
-          <>
-            <SearchBar onSearch={handleSearch} />
-            <MemberList
-              members={members}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          </>
-        )}
-      </main>
+          <main>
+            {showForm ? (
+              <MemberForm
+                member={selectedMember || undefined}
+                onSubmit={selectedMember ? handleUpdate : handleCreate}
+                onCancel={() => {
+                  setShowForm(false)
+                  setSelectedMember(null)
+                }}
+              />
+            ) : (
+              <>
+                <SearchBar onSearch={handleSearch} />
+                <MemberList
+                  members={members}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </>
+            )}
+          </main>
+        </>
+      )}
     </div>
   )
 }
