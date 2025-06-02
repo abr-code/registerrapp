@@ -1,45 +1,63 @@
+import { 
+    signInWithEmailAndPassword,
+    signOut,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged
+} from 'firebase/auth';
+import type { UserCredential, User } from 'firebase/auth';
+import { auth } from '../config/firebase';
+
 interface LoginCredentials {
     email: string;
     password: string;
 }
 
-interface AuthResponse {
-    success: boolean;
-    message?: string;
-}
-
-// In a real application, this would be replaced with actual API calls
-// and proper authentication mechanisms
 class AuthService {
-    private readonly MOCK_EMAIL = 'admin@example.com';
-    private readonly MOCK_PASSWORD = 'admin123';
-
-    async login({ email, password }: LoginCredentials): Promise<AuthResponse> {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        if (email === this.MOCK_EMAIL && password === this.MOCK_PASSWORD) {
-            return {
-                success: true
-            };
+    async login({ email, password }: LoginCredentials): Promise<UserCredential> {
+        try {
+            return await signInWithEmailAndPassword(auth, email, password);
+        } catch (error: any) {
+            throw new Error(this.getErrorMessage(error.code));
         }
-
-        return {
-            success: false,
-            message: 'Credenciales inválidas'
-        };
     }
 
-    async checkAuthStatus(): Promise<boolean> {
-        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-        const userEmail = localStorage.getItem('userEmail');
-        
-        return isAuthenticated && userEmail === this.MOCK_EMAIL;
+    async register({ email, password }: LoginCredentials): Promise<UserCredential> {
+        try {
+            return await createUserWithEmailAndPassword(auth, email, password);
+        } catch (error: any) {
+            throw new Error(this.getErrorMessage(error.code));
+        }
     }
 
-    logout(): void {
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userEmail');
+    onAuthStateChange(callback: (user: User | null) => void): () => void {
+        return onAuthStateChanged(auth, callback);
+    }
+
+    async logout(): Promise<void> {
+        try {
+            await signOut(auth);
+        } catch (error: any) {
+            throw new Error(this.getErrorMessage(error.code));
+        }
+    }
+
+    private getErrorMessage(errorCode: string): string {
+        switch (errorCode) {
+            case 'auth/invalid-email':
+                return 'El correo electrónico no es válido';
+            case 'auth/user-disabled':
+                return 'Esta cuenta ha sido deshabilitada';
+            case 'auth/user-not-found':
+                return 'No existe una cuenta con este correo electrónico';
+            case 'auth/wrong-password':
+                return 'Contraseña incorrecta';
+            case 'auth/email-already-in-use':
+                return 'Este correo electrónico ya está registrado';
+            case 'auth/weak-password':
+                return 'La contraseña debe tener al menos 6 caracteres';
+            default:
+                return 'Ocurrió un error durante la autenticación';
+        }
     }
 }
 

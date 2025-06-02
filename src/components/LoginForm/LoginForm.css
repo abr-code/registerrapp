@@ -81,6 +81,30 @@
     cursor: not-allowed;
 }
 
+.form-footer {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.toggle-auth-button {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    padding: 0.5rem;
+}
+
+.toggle-auth-button:hover {
+    color: #357abd;
+}
+
+.toggle-auth-button:disabled {
+    color: #cccccc;
+    cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
     .login-form {
         padding: 1.5rem;

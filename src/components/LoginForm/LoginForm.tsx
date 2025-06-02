@@ -2,12 +2,12 @@ import { useState, type FormEvent } from 'react';
 import './LoginForm.css';
 
 interface LoginFormProps {
-    onSubmit: (email: string, password: string) => void;
+    onSubmit: (email: string, password: string) => Promise<void>;
+    onRegister?: (email: string, password: string) => Promise<void>;
     onError?: (message: string) => void;
 }
 
-export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {
-    const [formData, setFormData] = useState({
+export const LoginForm = ({ onSubmit, onRegister, onError }: LoginFormProps) => {    const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
@@ -16,6 +16,8 @@ export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {
         email: '',
         password: ''
     });
+
+    const [isRegistering, setIsRegistering] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,9 +60,7 @@ export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {
             ...prev,
             [name]: ''
         }));
-    };
-
-    const handleSubmit = async (e: FormEvent) => {
+    };    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         
         const isEmailValid = validateEmail(formData.email);
@@ -73,9 +73,14 @@ export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {
 
         try {
             setIsSubmitting(true);
-            await onSubmit(formData.email, formData.password);
+            if (isRegistering && onRegister) {
+                await onRegister(formData.email, formData.password);
+            } else {
+                await onSubmit(formData.email, formData.password);
+            }
         } catch (error) {
-            onError?.(error instanceof Error ? error.message : 'Error al iniciar sesión');
+            onError?.(error instanceof Error ? error.message : 
+                isRegistering ? 'Error al registrar usuario' : 'Error al iniciar sesión');
         } finally {
             setIsSubmitting(false);
         }
@@ -114,15 +119,28 @@ export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {
                         disabled={isSubmitting}
                     />
                     {errors.password && <span className="error-message">{errors.password}</span>}
-                </div>
-
-                <button 
+                </div>            <button 
                     type="submit" 
                     disabled={isSubmitting}
                     className="login-button"
                 >
-                    {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    {isSubmitting 
+                        ? (isRegistering ? 'Registrando...' : 'Iniciando sesión...') 
+                        : (isRegistering ? 'Registrarse' : 'Iniciar Sesión')}
                 </button>
+
+                <div className="form-footer">
+                    <button 
+                        type="button"
+                        onClick={() => setIsRegistering(!isRegistering)}
+                        className="toggle-auth-button"
+                        disabled={isSubmitting}
+                    >
+                        {isRegistering 
+                            ? '¿Ya tienes una cuenta? Inicia sesión' 
+                            : '¿No tienes una cuenta? Regístrate'}
+                    </button>
+                </div>
             </form>
         </div>
     );

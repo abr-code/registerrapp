@@ -12,7 +12,7 @@ function App() {
   const [members, setMembers] = useState<Member[]>([])
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [showForm, setShowForm] = useState(false)
-  const { isAuthenticated, login, logout, user } = useAuth()
+  const { isAuthenticated, login, register, logout, user } = useAuth()
 
   useEffect(() => {
     loadMembers()
@@ -60,6 +60,7 @@ function App() {
       {!isAuthenticated ? (
         <LoginForm 
           onSubmit={login}
+          onRegister={register}
           onError={(message) => {
             // Here you could add a toast notification system
             alert(message);

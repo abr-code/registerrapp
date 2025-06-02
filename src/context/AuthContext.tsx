@@ -1,11 +1,14 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import type { User } from 'firebase/auth';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
-    user: { email: string } | null;
+    register: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+    user: User | null;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -24,42 +27,55 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<{ email: string } | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check authentication status when component mounts
-        const checkAuth = async () => {
-            const isValid = await authService.checkAuthStatus();
-            if (isValid) {
-                const userEmail = localStorage.getItem('userEmail');
-                setIsAuthenticated(true);
-                setUser({ email: userEmail! });
-            }
-        };
-        checkAuth();
+        const unsubscribe = authService.onAuthStateChange((user) => {
+            setUser(user);
+            setIsAuthenticated(!!user);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     const login = async (email: string, password: string) => {
-        const response = await authService.login({ email, password });
-        if (response.success) {
+        try {
+            const userCredential = await authService.login({ email, password });
+            setUser(userCredential.user);
             setIsAuthenticated(true);
-            setUser({ email });
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('userEmail', email);
-        } else {
-            throw new Error(response.message || 'Error al iniciar sesión');
+        } catch (error) {
+            throw error;
         }
     };
 
-    const logout = () => {
-        setIsAuthenticated(false);
-        setUser(null);
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userEmail');
+    const register = async (email: string, password: string) => {
+        try {
+            const userCredential = await authService.register({ email, password });
+            setUser(userCredential.user);
+            setIsAuthenticated(true);
+        } catch (error) {
+            throw error;
+        }
     };
 
+    const logout = async () => {
+        try {
+            await authService.logout();
+            setIsAuthenticated(false);
+            setUser(null);
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, register, logout, user, loading }}>
             {children}
         </AuthContext.Provider>
     );
