@@ -5,18 +5,21 @@ import { SearchBar } from './components/SearchBar'
 import { MemberList } from './components/MemberList'
 import { MemberForm } from './components/MemberForm'
 import { LoginForm } from './components/LoginForm'
+import { ExportImport } from './components/ExportImport'
 import { useAuth } from './context/AuthContext'
 import './App.css'
 
 function App() {
   const [members, setMembers] = useState<Member[]>([])
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [selectedMember, setSelectedMember] = useState<Member | undefined>(undefined)
   const [showForm, setShowForm] = useState(false)
   const { isAuthenticated, login, register, logout, user } = useAuth()
 
   useEffect(() => {
-    loadMembers()
-  }, [])
+    if (isAuthenticated) {
+      loadMembers()
+    }
+  }, [isAuthenticated])
 
   const loadMembers = async () => {
     const data = await memberService.getAll()
@@ -37,7 +40,7 @@ function App() {
   const handleUpdate = async (member: Omit<Member, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (selectedMember) {
       await memberService.update(selectedMember.id, member)
-      setSelectedMember(null)
+      setSelectedMember(undefined)
       setShowForm(false)
       loadMembers()
     }
@@ -50,61 +53,68 @@ function App() {
     }
   }
 
-  const handleEdit = (member: Member) => {
-    setSelectedMember(member)
-    setShowForm(true)
+  const handleImportComplete = () => {
+    loadMembers()
+  }
+
+  const handleImportError = (message: string) => {
+    alert(message)
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="login-container">
+        <LoginForm 
+          onSubmit={login}
+          onRegister={register}
+          onError={handleImportError}
+        />
+      </div>
+    )
   }
 
   return (
     <div className="app">
-      {!isAuthenticated ? (
-        <LoginForm 
-          onSubmit={login}
-          onRegister={register}
-          onError={(message) => {
-            // Here you could add a toast notification system
-            alert(message);
-          }}
+      <header>
+        <h1>Registro de Miembros</h1>
+        <div className="user-info">
+          <span>{user?.email}</span>
+          <button onClick={logout} className="logout-button">Cerrar sesión</button>
+        </div>
+      </header>
+      <main>
+        <div className="controls">
+          <SearchBar onSearch={handleSearch} />
+          <ExportImport 
+            onImportComplete={handleImportComplete}
+            onError={handleImportError}
+          />
+          <button onClick={() => setShowForm(true)} className="add-button">
+            Agregar Miembro
+          </button>
+        </div>
+        <MemberList 
+          members={members} 
+          onEdit={(member) => {
+            setSelectedMember(member)
+            setShowForm(true)
+          }} 
+          onDelete={handleDelete}
         />
-      ) : (
-        <>
-          <header>
-            <h1>Registro de Miembros</h1>
-            <div className="header-actions">
-              <button onClick={() => setShowForm(true)} className="add-button">
-                Nuevo Registro
-              </button>
-              <div className="user-info">
-                <span>{user?.email}</span>
-                <button onClick={logout} className="logout-button">
-                  Cerrar Sesión
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <main>
-            {showForm ? (
-              <MemberForm
-                member={selectedMember || undefined}
-                onSubmit={selectedMember ? handleUpdate : handleCreate}
-                onCancel={() => {
-                  setShowForm(false)
-                  setSelectedMember(null)
-                }}
-              />
-            ) : (
-              <>
-                <SearchBar onSearch={handleSearch} />
-                <MemberList
-                  members={members}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              </>
-            )}
-          </main>
-        </>
+      </main>
+      {showForm && (
+        <div className="modal">
+          <div className="modal-content">
+            <MemberForm
+              member={selectedMember}
+              onSubmit={selectedMember ? handleUpdate : handleCreate}
+              onCancel={() => {
+                setSelectedMember(undefined)
+                setShowForm(false)
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

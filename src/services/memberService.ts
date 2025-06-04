@@ -119,6 +119,56 @@ class MemberService {
             throw new Error('Error al eliminar el miembro');
         }
     }
+
+    async exportToJson(): Promise<string> {
+        try {
+            const members = await this.getAll();
+            return JSON.stringify(members, null, 2);
+        } catch (error) {
+            console.error('Error exporting members:', error);
+            throw new Error('Error al exportar los miembros');
+        }
+    }
+
+    async importFromJson(jsonData: string): Promise<void> {
+        try {
+            const members = JSON.parse(jsonData) as Member[];
+            
+            // Validate the data structure
+            if (!Array.isArray(members) || !members.every(this.isValidMember)) {
+                throw new Error('Formato de archivo inválido');
+            }
+
+            // Import each member
+            for (const member of members) {
+                const { id, ...memberData } = member;
+                const timestamp = Timestamp.now();
+                
+                await addDoc(collection(db, this.collectionName), {
+                    ...memberData,
+                    createdAt: timestamp,
+                    updatedAt: timestamp
+                });
+            }
+        } catch (error) {
+            console.error('Error importing members:', error);
+            throw new Error('Error al importar los miembros');
+        }
+    }
+
+    private isValidMember(member: any): member is Member {
+        return (
+            typeof member === 'object' &&
+            member !== null &&
+            typeof member.fullName === 'string' &&
+            typeof member.type === 'string' &&
+            typeof member.age === 'number' &&
+            typeof member.phone === 'string' &&
+            typeof member.email === 'string' &&
+            typeof member.invitedBy === 'string' &&
+            typeof member.visitReason === 'string'
+        );
+    }
 }
 
 export const memberService = new MemberService();

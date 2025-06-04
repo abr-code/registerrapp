@@ -1,0 +1,39 @@
+.export-import-container {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.export-import-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.export-import-button:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+.import-button {
+    background-color: #e6f3ff;
+    border-color: #1a73e8;
+    color: #1a73e8;
+}
+
+.import-button:hover {
+    background-color: #d2e3fc;
+    border-color: #174ea6;
+    color: #174ea6;
+}
+
+.file-input {
+    display: none;
+}
