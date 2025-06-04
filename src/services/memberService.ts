@@ -128,32 +128,80 @@ class MemberService {
             console.error('Error exporting members:', error);
             throw new Error('Error al exportar los miembros');
         }
-    }
-
-    async importFromJson(jsonData: string): Promise<void> {
+    }    async importFromJson(jsonData: string): Promise<{ 
+        imported: number;
+        skipped: { 
+            duplicates: number;
+            invalid: number;
+            duplicateNames: string[];
+        };
+    }> {
         try {
-            const members = JSON.parse(jsonData) as Member[];
-            
-            // Validate the data structure
-            if (!Array.isArray(members) || !members.every(this.isValidMember)) {
-                throw new Error('Formato de archivo inválido');
+            let data;
+            try {
+                data = JSON.parse(jsonData);
+            } catch (e) {
+                throw new Error('El archivo JSON no tiene un formato válido');
             }
 
-            // Import each member
-            for (const member of members) {
+            if (!Array.isArray(data)) {
+                throw new Error('El archivo debe contener un array de miembros');
+            }            // Get existing members for duplicate checking
+            const querySnapshot = await getDocs(collection(db, this.collectionName));
+            const existingMembers = querySnapshot.docs.map(this.convertToMember);
+            
+            let imported = 0;
+            let duplicates = 0;
+            let invalid = 0;
+            let duplicateNames: string[] = [];
+
+            // Process each member
+            for (const member of data) {
+                // Skip invalid members
+                if (!this.isValidMember(member)) {
+                    invalid++;
+                    continue;
+                }
+
                 const { id, ...memberData } = member;
-                const timestamp = Timestamp.now();
                 
+                // Check for duplicates using full name
+                if (this.isDuplicateMember(memberData, existingMembers)) {
+                    duplicates++;
+                    duplicateNames.push(memberData.fullName);
+                    continue;
+                }
+
+                const timestamp = Timestamp.now();
                 await addDoc(collection(db, this.collectionName), {
                     ...memberData,
                     createdAt: timestamp,
                     updatedAt: timestamp
                 });
-            }
-        } catch (error) {
+                
+                imported++;
+                // Add to existing members to check for duplicates in the same import batch
+                existingMembers.push({ ...memberData, id: 'temp-id' } as Member);
+            }            return {
+                imported,
+                skipped: {
+                    duplicates,
+                    invalid,
+                    duplicateNames
+                }
+            };} catch (error) {
             console.error('Error importing members:', error);
-            throw new Error('Error al importar los miembros');
+            if (error instanceof Error) {
+                throw new Error(`Error al importar miembros: ${error.message}`);
+            }
+            throw new Error('Error al importar miembros');
         }
+    }
+
+    private isDuplicateMember(memberData: Omit<Member, 'id'>, existingMembers: Member[]): boolean {
+        return existingMembers.some(
+            existing => existing.fullName.toLowerCase() === memberData.fullName.toLowerCase()
+        );
     }
 
     private isValidMember(member: any): member is Member {

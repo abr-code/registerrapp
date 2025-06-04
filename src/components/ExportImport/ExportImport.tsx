@@ -41,14 +41,29 @@ export const ExportImport = ({ onImportComplete, onError }: ExportImportProps) =
         const file = event.target.files?.[0];
         if (!file) return;
 
-        const reader = new FileReader();
-
-        reader.onload = async (e) => {
+        const reader = new FileReader();        reader.onload = async (e) => {
             try {
                 const jsonData = e.target?.result as string;
-                await memberService.importFromJson(jsonData);
+                const result = await memberService.importFromJson(jsonData);
                 onImportComplete?.();
-                onError?.('Datos importados exitosamente');
+                
+                // Create a detailed message about the import results
+                const messages = [];
+                messages.push(`✅ ${result.imported} registros importados exitosamente.`);
+                
+                if (result.skipped.duplicates > 0) {
+                    messages.push(
+                        `⚠️ ${result.skipped.duplicates} registros duplicados:`,
+                        result.skipped.duplicateNames.join(', ')
+                    );
+                }
+                
+                if (result.skipped.invalid > 0) {
+                    messages.push(`❌ ${result.skipped.invalid} registros inválidos omitidos.`);
+                }
+                
+                onError?.(messages.join('\n'));
+
                 // Reset file input
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
