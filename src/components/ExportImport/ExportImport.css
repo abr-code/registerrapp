@@ -10,6 +10,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
+    color: #000;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -23,15 +24,38 @@
 }
 
 .import-button {
-    background-color: #e6f3ff;
+    background-color: #1a73e8;
     border-color: #1a73e8;
-    color: #1a73e8;
+    color: #fff;
 }
 
 .import-button:hover {
-    background-color: #d2e3fc;
+    background-color: #174ea6;
     border-color: #174ea6;
-    color: #174ea6;
+}
+
+@media (prefers-color-scheme: dark) {
+    .export-import-button {
+        background-color: #2d2d2d;
+        color: #fff;
+        border-color: #444;
+    }
+
+    .export-import-button:hover {
+        background-color: #3d3d3d;
+        border-color: #666;
+    }
+
+    .import-button {
+        background-color: #1a73e8;
+        color: #fff;
+        border-color: #1a73e8;
+    }
+
+    .import-button:hover {
+        background-color: #2b7de9;
+        border-color: #2b7de9;
+    }
 }
 
 .file-input {
