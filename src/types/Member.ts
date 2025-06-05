@@ -11,8 +11,7 @@ export interface Member {
     phone: string;
     email: string;
     address: string;
-    invitedBy: string;
-    visitReason: VisitReason;
+    invitedBy: string;    visitReasons: VisitReason[];
     visitType: VisitType;
     requests: string;
     createdAt: string;

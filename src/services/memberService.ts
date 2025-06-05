@@ -57,14 +57,14 @@ class MemberService {
                     if (field) {
                         const value = member[field];
                         return value && value.toString().toLowerCase().includes(searchTermLower);
-                    }
-
-                    // Search in common searchable fields
-                    const searchableFields = ['fullName', 'email', 'phone', 'address', 'type', 'visitReason', 'invitedBy'];
+                    }                    // Search in common searchable fields
+                    const searchableFields = ['fullName', 'email', 'phone', 'address', 'type', 'invitedBy'];
                     return searchableFields.some(field => {
                         const value = member[field as keyof Member];
                         return value && value.toString().toLowerCase().includes(searchTermLower);
-                    });
+                    }) || member.visitReasons.some(reason => 
+                        reason.toLowerCase().includes(searchTermLower)
+                    );
                 });        } catch (error) {
             console.error('Error searching members:', error);
             throw new Error('Error al buscar miembros');
@@ -211,8 +211,8 @@ class MemberService {
             typeof member.age === 'number' &&
             typeof member.phone === 'string' &&
             typeof member.email === 'string' &&
-            typeof member.invitedBy === 'string' &&
-            typeof member.visitReason === 'string' &&
+            typeof member.invitedBy === 'string' &&            Array.isArray(member.visitReasons) &&
+            member.visitReasons.every((reason: unknown) => typeof reason === 'string') &&
             typeof member.visitType === 'string' &&
             ['Nuevo', 'Asistió antes'].includes(member.visitType)
         );

@@ -16,9 +16,8 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
         phone: member?.phone || '',
         email: member?.email || '',
         address: member?.address || '',
-        invitedBy: member?.invitedBy || '',
-        visitType: member?.visitType || 'Nuevo' as VisitType,
-        visitReason: member?.visitReason || '' as VisitReason,
+        invitedBy: member?.invitedBy || '',        visitType: member?.visitType || 'Nuevo' as VisitType,
+        visitReasons: member?.visitReasons || [] as VisitReason[],
         requests: member?.requests || ''
     });
 
@@ -154,23 +153,36 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
                         </label>
                     ))}
                 </div>
-            </div>
-
-            <div className="form-group">
-                <label>Razón de visita:</label>
-                <select
-                    name="visitReason"
-                    value={formData.visitReason}
-                    onChange={handleChange}
-                    required
-                >
-                    <option value="">Seleccione una opción</option>
-                    <option value="Visita por primera vez">Visita por primera vez</option>
-                    <option value="Me gustaría pertenecer a una iglesia">Me gustaría pertenecer a una iglesia</option>
-                    <option value="Quisiera unirme a la iglesia">Quisiera unirme a la iglesia</option>
-                    <option value="Nuevo en el vecindario">Nuevo en el vecindario</option>
-                    <option value="Deseo que un ministro me llame">Deseo que un ministro me llame</option>
-                </select>
+            </div>            <div className="form-group">
+                <label>Razones de visita (seleccione las que apliquen):</label>
+                <div className="checkbox-group">
+                    {[
+                        'Visita por primera vez',
+                        'Me gustaría pertenecer a una iglesia',
+                        'Quisiera unirme a la iglesia',
+                        'Nuevo en el vecindario',
+                        'Deseo que un ministro me llame'
+                    ].map((reason) => (
+                        <label key={reason}>
+                            <input
+                                type="checkbox"
+                                name="visitReasons"
+                                value={reason}
+                                checked={formData.visitReasons.includes(reason as VisitReason)}
+                                onChange={(e) => {
+                                    const value = e.target.value as VisitReason;
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        visitReasons: e.target.checked 
+                                            ? [...prev.visitReasons, value]
+                                            : prev.visitReasons.filter(r => r !== value)
+                                    }));
+                                }}
+                            />
+                            {reason}
+                        </label>
+                    ))}
+                </div>
             </div>
 
             <div className="form-group">
