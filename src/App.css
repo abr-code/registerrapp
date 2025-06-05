@@ -109,3 +109,60 @@ header {
     transform: translateY(0);
   }
 }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color, #eee);
+}
+
+.controls-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.controls-bottom {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.visit-type-filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--form-bg, #f5f5f5);
+  border-radius: 4px;
+  border: 1px solid var(--border-color, #ddd);
+}
+
+.visit-type-filter .radio-group {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.visit-type-filter label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-color, #000);
+}
+
+.visit-type-filter input[type="radio"] {
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .visit-type-filter {
+    --form-bg: #2d2d2d;
+    --border-color: #444;
+    --text-color: #fff;
+  }
+}
