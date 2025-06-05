@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
-import type { Member, MemberType, VisitReason } from '../../types/Member';
+import type { Member, MemberType, VisitReason, VisitType } from '../../types/Member';
 import './MemberForm.css';
 
 interface MemberFormProps {
@@ -8,8 +8,7 @@ interface MemberFormProps {
     onCancel: () => void;
 }
 
-export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
-    const [formData, setFormData] = useState({
+export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {    const [formData, setFormData] = useState({
         type: member?.type || '' as MemberType,
         date: member?.date || new Date().toISOString().split('T')[0],
         fullName: member?.fullName || '',
@@ -18,6 +17,7 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
         email: member?.email || '',
         address: member?.address || '',
         invitedBy: member?.invitedBy || '',
+        visitType: member?.visitType || 'Nuevo' as VisitType,
         visitReason: member?.visitReason || '' as VisitReason,
         requests: member?.requests || ''
     });
@@ -127,9 +127,7 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
                     onChange={handleChange}
                     required
                 />
-            </div>
-
-            <div className="form-group">
+            </div>            <div className="form-group">
                 <label htmlFor="invitedBy">Viene invitado por:</label>
                 <input
                     type="text"
@@ -138,6 +136,24 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
                     value={formData.invitedBy}
                     onChange={handleChange}
                 />
+            </div>
+
+            <div className="form-group">
+                <label>Tipo de Visita:</label>
+                <div className="radio-group visit-type-group">
+                    {['Nuevo', 'Asistió antes'].map(type => (
+                        <label key={type}>
+                            <input
+                                type="radio"
+                                name="visitType"
+                                value={type}
+                                checked={formData.visitType === type}
+                                onChange={handleChange}
+                            />
+                            {type}
+                        </label>
+                    ))}
+                </div>
             </div>
 
             <div className="form-group">

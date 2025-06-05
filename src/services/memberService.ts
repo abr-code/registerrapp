@@ -202,9 +202,7 @@ class MemberService {
         return existingMembers.some(
             existing => existing.fullName.toLowerCase() === memberData.fullName.toLowerCase()
         );
-    }
-
-    private isValidMember(member: any): member is Member {
+    }    private isValidMember(member: any): member is Member {
         return (
             typeof member === 'object' &&
             member !== null &&
@@ -214,7 +212,9 @@ class MemberService {
             typeof member.phone === 'string' &&
             typeof member.email === 'string' &&
             typeof member.invitedBy === 'string' &&
-            typeof member.visitReason === 'string'
+            typeof member.visitReason === 'string' &&
+            typeof member.visitType === 'string' &&
+            ['Nuevo', 'Asistió antes'].includes(member.visitType)
         );
     }
 }
