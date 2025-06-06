@@ -3,11 +3,10 @@ import './LoginForm.css';
 
 interface LoginFormProps {
     onSubmit: (email: string, password: string) => Promise<void>;
-    onRegister?: (email: string, password: string) => Promise<void>;
     onError?: (message: string) => void;
 }
 
-export const LoginForm = ({ onSubmit, onRegister, onError }: LoginFormProps) => {    const [formData, setFormData] = useState({
+export const LoginForm = ({ onSubmit, onError }: LoginFormProps) => {    const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
@@ -15,9 +14,7 @@ export const LoginForm = ({ onSubmit, onRegister, onError }: LoginFormProps) => 
     const [errors, setErrors] = useState({
         email: '',
         password: ''
-    });
-
-    const [isRegistering, setIsRegistering] = useState(false);
+    });    // const [isRegistering, setIsRegistering] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -72,15 +69,8 @@ export const LoginForm = ({ onSubmit, onRegister, onError }: LoginFormProps) => 
         }
 
         try {
-            setIsSubmitting(true);
-            if (isRegistering && onRegister) {
-                await onRegister(formData.email, formData.password);
-            } else {
-                await onSubmit(formData.email, formData.password);
-            }
-        } catch (error) {
-            onError?.(error instanceof Error ? error.message : 
-                isRegistering ? 'Error al registrar usuario' : 'Error al iniciar sesión');
+            setIsSubmitting(true);            await onSubmit(formData.email, formData.password);
+        } catch (error) {            onError?.(error instanceof Error ? error.message : 'Error al iniciar sesión');
         } finally {
             setIsSubmitting(false);
         }
@@ -123,24 +113,7 @@ export const LoginForm = ({ onSubmit, onRegister, onError }: LoginFormProps) => 
                     type="submit" 
                     disabled={isSubmitting}
                     className="login-button"
-                >
-                    {isSubmitting 
-                        ? (isRegistering ? 'Registrando...' : 'Iniciando sesión...') 
-                        : (isRegistering ? 'Registrarse' : 'Iniciar Sesión')}
-                </button>
-
-                <div className="form-footer">
-                    <button 
-                        type="button"
-                        onClick={() => setIsRegistering(!isRegistering)}
-                        className="toggle-auth-button"
-                        disabled={isSubmitting}
-                    >
-                        {isRegistering 
-                            ? '¿Ya tienes una cuenta? Inicia sesión' 
-                            : '¿No tienes una cuenta? Regístrate'}
-                    </button>
-                </div>
+                >                    {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}                </button>
             </form>
         </div>
     );

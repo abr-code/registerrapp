@@ -1,8 +1,6 @@
 import { 
     signInWithEmailAndPassword,
-    signOut,
-    createUserWithEmailAndPassword,
-    onAuthStateChanged
+    signOut,    onAuthStateChanged
 } from 'firebase/auth';
 import type { UserCredential, User } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -19,17 +17,7 @@ class AuthService {
         } catch (error: any) {
             throw new Error(this.getErrorMessage(error.code));
         }
-    }
-
-    async register({ email, password }: LoginCredentials): Promise<UserCredential> {
-        try {
-            return await createUserWithEmailAndPassword(auth, email, password);
-        } catch (error: any) {
-            throw new Error(this.getErrorMessage(error.code));
-        }
-    }
-
-    onAuthStateChange(callback: (user: User | null) => void): () => void {
+    }    onAuthStateChange(callback: (user: User | null) => void): () => void {
         return onAuthStateChanged(auth, callback);
     }
 

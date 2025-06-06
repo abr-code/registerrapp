@@ -14,7 +14,7 @@ function App() {
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([])
   const [selectedMember, setSelectedMember] = useState<Member | undefined>(undefined)
   const [showForm, setShowForm] = useState(false)
-  const { isAuthenticated, login, register, logout, user } = useAuth()
+  const { isAuthenticated, login, logout, user } = useAuth()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -92,7 +92,6 @@ function App() {
       <div className="login-container">
         <LoginForm 
           onSubmit={login}
-          onRegister={register}
           onError={handleImportError}
         />
       </div>

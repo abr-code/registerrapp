@@ -5,7 +5,6 @@ import { authService } from '../services/authService';
 interface AuthContextType {
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     user: User | null;
     loading: boolean;
@@ -48,19 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } catch (error) {
             throw error;
         }
-    };
-
-    const register = async (email: string, password: string) => {
-        try {
-            const userCredential = await authService.register({ email, password });
-            setUser(userCredential.user);
-            setIsAuthenticated(true);
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    const logout = async () => {
+    };    const logout = async () => {
         try {
             await authService.logout();
             setIsAuthenticated(false);
@@ -74,8 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return <div>Loading...</div>;
     }
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, login, register, logout, user, loading }}>
+    return (        <AuthContext.Provider value={{ isAuthenticated, login, logout, user, loading }}>
             {children}
         </AuthContext.Provider>
     );
