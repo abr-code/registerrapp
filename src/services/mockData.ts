@@ -11,7 +11,7 @@ export const mockMembers: Member[] = [
         email: 'juan@email.com',
         address: 'Calle Principal 123',
         invitedBy: 'Pastor David Ramírez',
-        visitReasons: ['Visita por primera vez', 'Deseo que un ministro me llame'],
+        visitReasons: [ 'Deseo que un ministro me llame'],
         visitType: 'Nuevo',
         requests: 'Oración por mi familia',
         createdAt: '2025-05-20T10:00:00Z',

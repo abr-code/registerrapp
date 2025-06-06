@@ -1,5 +1,5 @@
 export type MemberType = 'Niño(a)' | 'Joven' | 'Sr.' | 'Sra.';
-export type VisitReason = 'Visita por primera vez' | 'Me gustaría pertenecer a una iglesia' | 'Quisiera unirme a la iglesia' | 'Nuevo en el vecindario' | 'Deseo que un ministro me llame';
+export type VisitReason = 'Me gustaría pertenecer a una iglesia' | 'Quisiera unirme a la iglesia' | 'Nuevo en el vecindario' | 'Deseo que un ministro me llame';
 export type VisitType = 'Nuevo' | 'Asistió antes';
 
 export interface Member {
@@ -11,7 +11,8 @@ export interface Member {
     phone: string;
     email: string;
     address: string;
-    invitedBy: string;    visitReasons: VisitReason[];
+    invitedBy: string;    
+    visitReasons: VisitReason[];
     visitType: VisitType;
     requests: string;
     createdAt: string;

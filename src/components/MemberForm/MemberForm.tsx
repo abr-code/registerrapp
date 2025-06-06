@@ -8,7 +8,8 @@ interface MemberFormProps {
     onCancel: () => void;
 }
 
-export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {    const [formData, setFormData] = useState({
+export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {   
+     const [formData, setFormData] = useState({
         type: member?.type || '' as MemberType,
         date: member?.date || new Date().toISOString().split('T')[0],
         fullName: member?.fullName || '',
@@ -16,7 +17,8 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
         phone: member?.phone || '',
         email: member?.email || '',
         address: member?.address || '',
-        invitedBy: member?.invitedBy || '',        visitType: member?.visitType || 'Nuevo' as VisitType,
+        invitedBy: member?.invitedBy || '',        
+        visitType: member?.visitType || 'Nuevo' as VisitType,
         visitReasons: member?.visitReasons || [] as VisitReason[],
         requests: member?.requests || ''
     });
@@ -157,7 +159,6 @@ export const MemberForm = ({ member, onSubmit, onCancel }: MemberFormProps) => {
                 <label>Razones de visita (seleccione las que apliquen):</label>
                 <div className="checkbox-group">
                     {[
-                        'Visita por primera vez',
                         'Me gustaría pertenecer a una iglesia',
                         'Quisiera unirme a la iglesia',
                         'Nuevo en el vecindario',
